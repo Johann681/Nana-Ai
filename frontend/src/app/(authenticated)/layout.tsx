@@ -1,29 +1,28 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-unescaped-entities */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useState } from 'react';
-import {
-  type LucideIcon,
-  Bell,
-  Moon,
-  Globe,
-  Shield,
-  Users,
-  Database,
+import { 
+  Bell, 
+  Moon, 
+  Globe, 
+  Shield, 
+  Users, 
+  Database, 
   Mail,
   ChevronRight,
   Lock,
   Smartphone,
-  Eye,
   FileText,
   Download
 } from 'lucide-react';
 
+// Define types directly in the file to avoid import issues
 type ToggleSetting = {
   label: string;
   desc: string;
-  icon: LucideIcon;
+  icon: any;
   action: 'toggle';
   value: boolean;
   onToggle: () => void;
@@ -32,7 +31,7 @@ type ToggleSetting = {
 type LinkSetting = {
   label: string;
   desc: string;
-  icon: LucideIcon;
+  icon: any;
   action: 'link';
   href: string;
 };
@@ -40,7 +39,7 @@ type LinkSetting = {
 type ActionSetting = {
   label: string;
   desc: string;
-  icon: LucideIcon;
+  icon: any;
   action: 'action';
   onClick: () => void;
 };
@@ -113,7 +112,6 @@ export default function SettingsPage() {
       icon: Download,
       action: "action",
       onClick: () => {
-        // Handle data export
         console.log("Exporting data...");
         alert("Your data export will be prepared and emailed to you.");
       }
@@ -141,51 +139,14 @@ export default function SettingsPage() {
     }
   ];
 
-  const renderSettingItem = (item: SettingItem) => {
-    const Icon = item.icon;
+  // Helper function to check if an item is a toggle
+  const isToggleItem = (item: SettingItem): item is ToggleSetting => {
+    return item.action === 'toggle';
+  };
 
-    return (
-      <div
-        key={item.label}
-        className="flex items-center justify-between p-5 bg-white border border-medical-border rounded-sm hover:shadow-sm transition-all duration-200"
-      >
-        <div className="flex items-start gap-4">
-          <div className="w-10 h-10 bg-medical-primary/10 rounded-sm flex items-center justify-center">
-            <Icon className="w-5 h-5 text-medical-primary" />
-          </div>
-          <div>
-            <h3 className="font-bold text-medical-secondary mb-1">{item.label}</h3>
-            <p className="text-sm text-medical-muted">{item.desc}</p>
-          </div>
-        </div>
-
-        <div>
-          {item.action === 'toggle' && (
-            <button
-              onClick={item.onToggle}
-              className={`w-11 h-6 rounded-full relative transition-all duration-300 ${
-                item.value ? 'bg-medical-primary' : 'bg-slate-200'
-              }`}
-            >
-              <div
-                className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-300 ${
-                  item.value ? 'right-1' : 'left-1'
-                }`}
-              />
-            </button>
-          )}
-
-          {(item.action === 'link' || item.action === 'action') && (
-            <button
-              onClick={item.action === 'link' ? () => window.location.href = item.href : item.onClick}
-              className="w-8 h-8 flex items-center justify-center rounded-sm hover:bg-slate-50 transition-colors"
-            >
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </button>
-          )}
-        </div>
-      </div>
-    );
+  // Helper function to check if an item is a link or action
+  const isNavigableItem = (item: SettingItem): item is LinkSetting | ActionSetting => {
+    return item.action === 'link' || item.action === 'action';
   };
 
   return (
@@ -196,7 +157,61 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid gap-4">
-        {settingsData.map((item) => renderSettingItem(item))}
+        {settingsData.map((item) => {
+          const Icon = item.icon;
+          
+          return (
+            <div
+              key={item.label}
+              className="flex items-center justify-between p-5 bg-white border border-medical-border rounded-sm hover:shadow-sm transition-all duration-200"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-medical-primary/10 rounded-sm flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-medical-primary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-medical-secondary mb-1">{item.label}</h3>
+                  <p className="text-sm text-medical-muted">{item.desc}</p>
+                </div>
+              </div>
+
+              <div>
+                {isToggleItem(item) && (
+                  <button
+                    onClick={item.onToggle}
+                    className={`w-11 h-6 rounded-full relative transition-all duration-300 ${
+                      item.value ? 'bg-medical-primary' : 'bg-slate-200'
+                    }`}
+                  >
+                    <div
+                      className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-300 ${
+                        item.value ? 'right-1' : 'left-1'
+                      }`}
+                    />
+                  </button>
+                )}
+
+                {isNavigableItem(item) && item.action === 'link' && (
+                  <button
+                    onClick={() => window.location.href = item.href}
+                    className="w-8 h-8 flex items-center justify-center rounded-sm hover:bg-slate-50 transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  </button>
+                )}
+
+                {isNavigableItem(item) && item.action === 'action' && (
+                  <button
+                    onClick={item.onClick}
+                    className="w-8 h-8 flex items-center justify-center rounded-sm hover:bg-slate-50 transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="mt-8 p-5 bg-amber-50 border border-amber-200 rounded-sm">
