@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #F8FAFC;
+    --bg-secondary: #FFFFFF;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #94A3B8;
+    --accent-primary: #1E40AF;
+    --accent-hover: #1E3A8A;
+    --border-color: #E2E8F0;
+    --medical-red: #EF4444;
+    --medical-green: #10B981;
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    
+    /* New Enterprise Tokens */
+    --surface-sunken: #F1F5F9;
+    --surface-elevated: #FFFFFF;
+    --ring-offset: #FFFFFF;
+    --ring: #3B82F6;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .card-enterprise {
+    @apply bg-white border border-medical-border rounded-md shadow-enterprise transition-all duration-200;
+  }
+
+  .card-enterprise:hover {
+    @apply border-medical-primary shadow-premium;
+  }
+
+  .btn-primary {
+    @apply bg-medical-primary text-white rounded-sm px-6 py-2.5 text-sm font-semibold transition-all duration-150 border border-medical-primary hover:bg-medical-secondary active:scale-[0.98] disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-medical-secondary border border-medical-border rounded-sm px-6 py-2.5 text-sm font-semibold transition-all duration-150 hover:bg-slate-50 active:scale-[0.98] disabled:opacity-50;
+  }
+
+  .input-enterprise {
+    @apply w-full px-4 py-2.5 bg-white border border-medical-border rounded-sm text-sm transition-all focus:outline-none focus:ring-2 focus:ring-medical-accent/20 focus:border-medical-accent placeholder:text-slate-400;
+  }
+
+  .label-enterprise {
+    @apply block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-0.5;
+  }
+}
+
+@layer utilities {
+  .h-dvh { height: 100dvh; }
+  .border-thin { border: 1px solid var(--border-color); }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+}
+
+/* ── Animations ────────────────────────────────────────────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in {
+  animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Chat System ──────────────────────────────────────────────────────────── */
+.consultation-bubble {
+  @apply p-4 rounded-md text-[15px] leading-relaxed border border-medical-border max-w-[85%];
+}
+
+.bubble-ai {
+  @apply bg-white text-medical-secondary border-l-4 border-l-medical-primary;
+}
+
+.bubble-user {
+  @apply bg-slate-100 text-medical-secondary self-end;
+}
+
+/* ── Stepper ────────────────────────────────────────────────────────────── */
+.stepper-dot {
+  @apply w-2.5 h-2.5 rounded-full bg-slate-200 transition-all duration-300;
+}
+
+.stepper-dot.active {
+  @apply bg-medical-primary ring-4 ring-medical-primary/10;
+}
+
+
+/* ── Dark Mode ────────────────────────────────────────────────────────────── */
+.dark {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --border-color: #334155;
+  --surface-sunken: #1e293b;
+  --surface-elevated: #1e293b;
+  --ring-offset: #0f172a;
+}
+
+.dark body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.dark .card-enterprise {
+  @apply bg-[#1e293b] border-[#334155];
+}
+
+.dark .card-enterprise:hover {
+  @apply border-medical-accent;
+}
+
+.dark .divide-slate-50 > * + * {
+  border-color: #334155 !important;
+}
+
+.dark .hover\:bg-slate-50\/50:hover {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+.dark .bg-medical-surface {
+  background-color: #1e293b !important;
+}
+
+.dark .border-medical-border {
+  border-color: #334155 !important;
+}
+
+.dark .text-medical-secondary {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-slate-400,
+.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-slate-300 {
+  color: #475569 !important;
+}
+
+.dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-red-50\/30 {
+  background-color: rgba(69, 10, 10, 0.3) !important;
+}
+
+.dark .border-red-100 {
+  border-color: #7f1d1d !important;
+}
+
+.dark .text-red-900 {
+  color: #fca5a5 !important;
+}
+
+.dark .text-red-600\/70 {
+  color: rgba(252, 165, 165, 0.7) !important;
+}
+
+.dark .input-enterprise {
+  @apply bg-[#1e293b] border-[#334155] text-slate-200 placeholder:text-slate-600;
+}
+
+.dark .btn-secondary {
+  @apply bg-[#1e293b] text-slate-200 border-[#334155] hover:bg-[#273449];
+}
+
+/* ── High Contrast ────────────────────────────────────────────────────────── */
+.high-contrast {
+  filter: contrast(1.25);
+}
+
+.dark.high-contrast body,
+.dark .high-contrast {
+  filter: contrast(1.4) brightness(1.05);
+}
