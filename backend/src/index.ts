@@ -17,13 +17,21 @@ connectDB();
 app.use(helmet());
 app.use(cookieParser());
 app.use(cors({
-  origin: (process.env.ALLOWED_ORIGINS ?? 'http://localhost:3000').split(',').map(o => o.trim()),
+  origin: (origin, callback) => {
+    const allowed = [
+      'http://localhost:3000',
+      /^https:\/\/nana-.*\.vercel\.app$/,
+    ];
+    if (!origin || allowed.some(o => typeof o === 'string' ? o === origin : o.test(origin))) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}))
-app.use(express.json({ limit: '10kb' }));
-
+}));
 // ── Routes ──────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRouter);
 app.use('/api/consultations', consultationRouter);
