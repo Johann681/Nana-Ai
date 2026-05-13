@@ -1,6 +1,6 @@
 import { Message } from '@/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function createConsultation(doctorId: string, doctorName: string) {
   const res = await fetch(`${API_URL}/api/consultations`, {

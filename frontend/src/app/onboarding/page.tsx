@@ -38,7 +38,7 @@ export default function OnboardingPage() {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const apiBase = process.env.NEXT_PUBLIC_API_URL;
       const res = await fetch(`${apiBase}/api/auth/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
