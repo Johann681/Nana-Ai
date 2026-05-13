@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { loginUser } from '@/lib/api';
 import { ShieldCheck, Lock, Mail, ChevronRight, Activity, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -21,16 +22,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Identity verification failed');
-
+      const data = await loginUser(formData);
       login(data);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Login failed';

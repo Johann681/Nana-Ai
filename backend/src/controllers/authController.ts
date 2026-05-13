@@ -22,6 +22,7 @@ export const register = async (req: Request, res: Response) => {
       name: user.name,
       email: user.email,
       onboardingComplete: user.onboardingComplete,
+      accessToken,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'An unknown error occurred';
@@ -43,6 +44,7 @@ export const login = async (req: Request, res: Response) => {
         name: user.name,
         email: user.email,
         onboardingComplete: user.onboardingComplete,
+        accessToken,
       });
     } else {
       res.status(401).json({ error: 'Invalid email or password' });
@@ -76,7 +78,7 @@ export const refresh = async (req: Request, res: Response) => {
     const { accessToken, refreshToken } = generateTokens(user._id.toString());
     setTokenCookies(res, accessToken, refreshToken);
 
-    res.status(200).json({ message: 'Token refreshed' });
+    res.status(200).json({ message: 'Token refreshed', accessToken });
   } catch (error) {
     res.status(401).json({ error: 'Invalid refresh token' });
   }

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { registerUser } from '@/lib/api';
 import { UserPlus, User, Mail, Lock, ChevronRight, Activity, Loader2 } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -26,20 +27,11 @@ export default function RegisterPage() {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ 
-          name: formData.name, 
-          email: formData.email, 
-          password: formData.password 
-        }),
+      const data = await registerUser({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Identity initialization failed');
-
       login(data);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Registration failed';

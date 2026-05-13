@@ -16,17 +16,15 @@ const PORT = process.env.PORT ?? 5000;
 // Connect to Database
 connectDB();
 
-app.use(helmet());
-app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(cors({
   origin: (origin, callback) => {
-    const allowed = [
-      'http://localhost:3000',
-      /^https:\/\/nana-.*\.vercel\.app$/,
-    ];
-    if (!origin || allowed.some(o => typeof o === 'string' ? o === origin : o.test(origin))) {
+    const allowedOrigin = /^https:\/\/nana-.*\.vercel\.app$/;
+    const allowedLocalOrigin = /^http:\/\/localhost:(3000|5000)$/;
+
+    if (!origin || allowedOrigin.test(origin) || allowedLocalOrigin.test(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -36,6 +34,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+app.use(helmet());
 // ── Routes ──────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRouter);
 app.use('/api/consultations', consultationRouter);

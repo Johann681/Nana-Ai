@@ -8,7 +8,9 @@ interface JwtPayload {
 }
 
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const token = req.cookies?.accessToken;
+  const authHeader = req.headers.authorization;
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined;
+  const token = bearerToken || req.cookies?.accessToken;
 
   if (!token) {
     return res.status(401).json({ error: 'Not authorized, no token' });

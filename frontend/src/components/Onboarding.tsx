@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { updateProfile } from '@/lib/api';
 
 interface OnboardingProps {
   onStart: () => void;
@@ -14,25 +15,13 @@ export default function Onboarding({ onStart }: OnboardingProps) {
   const completeOnboarding = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/profile`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          onboardingComplete: true,
-          profile: {
-            hasCompletedOnboarding: true,
-            onboardedAt: new Date().toISOString()
-          }
-        }),
+      await updateProfile({
+        onboardingComplete: true,
+        profile: {
+          hasCompletedOnboarding: true,
+          onboardedAt: new Date().toISOString()
+        }
       });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to complete intake');
-      }
-
-      await response.json();
       if (updateUser && user) {
         updateUser({ ...user, onboardingComplete: true });
       }

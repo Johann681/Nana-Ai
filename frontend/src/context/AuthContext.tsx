@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { clearAuthToken, getAuthToken, getCurrentUser, logoutUser, refreshSession } from '@/lib/api';
 
 interface User {
   _id: string;
@@ -47,19 +48,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL;
-      // First try to refresh token
-      const refreshRes = await fetch(`${apiBase}/api/auth/refresh`, { method: 'POST', credentials: 'include' });
-      
-      if (refreshRes.ok) {
-        // Then get user data
-        const meRes = await fetch(`${apiBase}/api/auth/me`, { credentials: 'include' });
-        if (meRes.ok) {
-          const data = await meRes.json();
-          setUser(data);
-        }
+      if (!getAuthToken()) {
+        await refreshSession();
       }
+
+      const data = await getCurrentUser();
+      setUser(data);
     } catch {
+      clearAuthToken();
       console.error('Auth check failed');
     } finally {
       setLoading(false);
@@ -77,12 +73,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
+      await logoutUser();
     } catch {
       console.error('Logout request failed');
+      clearAuthToken();
     }
     setUser(null);
     router.push('/auth/login');

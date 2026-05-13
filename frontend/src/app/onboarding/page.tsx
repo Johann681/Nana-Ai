@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { updateProfile } from '@/lib/api';
 import { 
   User, 
   Stethoscope, 
@@ -38,31 +39,23 @@ export default function OnboardingPage() {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL;
-      const res = await fetch(`${apiBase}/api/auth/profile`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          profile: {
-            dob: formData.dob,
-            gender: formData.gender,
-            country: formData.country,
-            bloodType: formData.bloodType,
-            emergencyContact: {
-              name: formData.emergencyName,
-              phone: formData.emergencyPhone,
-            },
+      await updateProfile({
+        profile: {
+          dob: formData.dob,
+          gender: formData.gender,
+          country: formData.country,
+          bloodType: formData.bloodType,
+          emergencyContact: {
+            name: formData.emergencyName,
+            phone: formData.emergencyPhone,
           },
-          healthInfo: {
-            allergies: formData.allergies.split(',').map(s => s.trim()).filter(s => s !== ''),
-            chronicConditions: formData.chronicConditions.split(',').map(s => s.trim()).filter(s => s !== ''),
-          },
-          onboardingComplete: true,
-        }),
+        },
+        healthInfo: {
+          allergies: formData.allergies.split(',').map(s => s.trim()).filter(s => s !== ''),
+          chronicConditions: formData.chronicConditions.split(',').map(s => s.trim()).filter(s => s !== ''),
+        },
+        onboardingComplete: true,
       });
-
-      if (!res.ok) throw new Error('Failed to save profile');
       
       await refreshUser();
       router.push('/home');
