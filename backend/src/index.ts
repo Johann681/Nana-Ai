@@ -9,6 +9,8 @@ import reportRouter from './routes/report';
 import authRouter from './routes/auth';
 
 const app = express();
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT ?? 5000;
 
 // Connect to Database
@@ -16,6 +18,8 @@ connectDB();
 
 app.use(helmet());
 app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
