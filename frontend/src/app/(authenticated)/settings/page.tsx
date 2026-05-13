@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { 
   Bell, 
   Moon, 
@@ -12,6 +13,29 @@ import {
   Eye,
   Smartphone
 } from 'lucide-react';
+
+type ToggleSettingItem = {
+  label: string;
+  desc: string;
+  icon: LucideIcon;
+  action: 'toggle';
+  value: boolean;
+  onToggle: () => void;
+};
+
+type LinkSettingItem = {
+  label: string;
+  desc: string;
+  icon: LucideIcon;
+  action: 'link';
+};
+
+type SettingItem = ToggleSettingItem | LinkSettingItem;
+
+type SettingsSection = {
+  title: string;
+  items: SettingItem[];
+};
 
 export default function SettingsPage() {
   // 1. state
@@ -53,7 +77,7 @@ export default function SettingsPage() {
   };
 
   // ... rest of your component stays exactly the same
-  const sections = [
+  const sections: SettingsSection[] = [
     {
       title: 'Preferences',
       items: [

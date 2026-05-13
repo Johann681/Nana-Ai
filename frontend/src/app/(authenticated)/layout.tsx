@@ -1,229 +1,143 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import { useState } from 'react';
-import { 
-  Bell, 
-  Moon, 
-  Globe, 
-  Shield, 
-  Users, 
-  Database, 
-  Mail,
-  ChevronRight,
-  Lock,
-  Smartphone,
+import type { ReactNode } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import {
+  Activity,
   FileText,
-  Download
+  Home,
+  Loader2,
+  LogOut,
+  MessageSquare,
+  Settings,
+  ShieldCheck,
+  User,
 } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
-// Define types directly in the file to avoid import issues
-type ToggleSetting = {
-  label: string;
-  desc: string;
-  icon: any;
-  action: 'toggle';
-  value: boolean;
-  onToggle: () => void;
+type AuthenticatedLayoutProps = {
+  children: ReactNode;
 };
 
-type LinkSetting = {
-  label: string;
-  desc: string;
-  icon: any;
-  action: 'link';
-  href: string;
-};
+const navigation = [
+  { label: 'Home', href: '/home', icon: Home },
+  { label: 'Consultations', href: '/consultations', icon: MessageSquare },
+  { label: 'Reports', href: '/reports', icon: FileText },
+  { label: 'Profile', href: '/profile', icon: User },
+  { label: 'Settings', href: '/settings', icon: Settings },
+];
 
-type ActionSetting = {
-  label: string;
-  desc: string;
-  icon: any;
-  action: 'action';
-  onClick: () => void;
-};
+export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading, logout } = useAuth();
 
-type SettingItem = ToggleSetting | LinkSetting | ActionSetting;
-
-export default function SettingsPage() {
-  const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [autoSave, setAutoSave] = useState(true);
-  const [twoFactor, setTwoFactor] = useState(false);
-
-  const settingsData: SettingItem[] = [
-    {
-      label: "Push Notifications",
-      desc: "Receive real-time health alerts and reminders",
-      icon: Bell,
-      action: "toggle",
-      value: notifications,
-      onToggle: () => setNotifications(!notifications)
-    },
-    {
-      label: "Dark Mode",
-      desc: "Switch to dark theme for better night visibility",
-      icon: Moon,
-      action: "toggle",
-      value: darkMode,
-      onToggle: () => setDarkMode(!darkMode)
-    },
-    {
-      label: "Auto-Save Reports",
-      desc: "Automatically save consultation reports",
-      icon: Database,
-      action: "toggle",
-      value: autoSave,
-      onToggle: () => setAutoSave(!autoSave)
-    },
-    {
-      label: "Two-Factor Authentication",
-      desc: "Add an extra layer of security to your account",
-      icon: Shield,
-      action: "toggle",
-      value: twoFactor,
-      onToggle: () => setTwoFactor(!twoFactor)
-    },
-    {
-      label: "Language & Region",
-      desc: "Change your preferred language and regional settings",
-      icon: Globe,
-      action: "link",
-      href: "/settings/language"
-    },
-    {
-      label: "Privacy Controls",
-      desc: "Manage your data privacy and sharing preferences",
-      icon: Lock,
-      action: "link",
-      href: "/settings/privacy"
-    },
-    {
-      label: "Connected Devices",
-      desc: "Manage devices connected to your account",
-      icon: Smartphone,
-      action: "link",
-      href: "/settings/devices"
-    },
-    {
-      label: "Data Export",
-      desc: "Download all your medical records and data",
-      icon: Download,
-      action: "action",
-      onClick: () => {
-        console.log("Exporting data...");
-        alert("Your data export will be prepared and emailed to you.");
-      }
-    },
-    {
-      label: "Account Sharing",
-      desc: "Manage family access and shared accounts",
-      icon: Users,
-      action: "link",
-      href: "/settings/sharing"
-    },
-    {
-      label: "Email Preferences",
-      desc: "Choose which emails you receive from Nana",
-      icon: Mail,
-      action: "link",
-      href: "/settings/emails"
-    },
-    {
-      label: "Medical ID",
-      desc: "Set up your emergency medical information",
-      icon: FileText,
-      action: "link",
-      href: "/settings/medical-id"
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/auth/login');
     }
-  ];
+  }, [loading, router, user]);
 
-  // Helper function to check if an item is a toggle
-  const isToggleItem = (item: SettingItem): item is ToggleSetting => {
-    return item.action === 'toggle';
-  };
-
-  // Helper function to check if an item is a link or action
-  const isNavigableItem = (item: SettingItem): item is LinkSetting | ActionSetting => {
-    return item.action === 'link' || item.action === 'action';
-  };
+  if (loading || !user) {
+    return (
+      <div className="min-h-dvh bg-medical-surface flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-slate-500">
+          <Loader2 className="w-8 h-8 animate-spin text-medical-primary" />
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em]">Validating secure session</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-medical-secondary">Settings</h1>
-        <p className="text-medical-muted mt-1">Manage your account preferences and security</p>
-      </div>
-
-      <div className="grid gap-4">
-        {settingsData.map((item) => {
-          const Icon = item.icon;
-          
-          return (
-            <div
-              key={item.label}
-              className="flex items-center justify-between p-5 bg-white border border-medical-border rounded-sm hover:shadow-sm transition-all duration-200"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-medical-primary/10 rounded-sm flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-medical-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-medical-secondary mb-1">{item.label}</h3>
-                  <p className="text-sm text-medical-muted">{item.desc}</p>
-                </div>
-              </div>
-
-              <div>
-                {isToggleItem(item) && (
-                  <button
-                    onClick={item.onToggle}
-                    className={`w-11 h-6 rounded-full relative transition-all duration-300 ${
-                      item.value ? 'bg-medical-primary' : 'bg-slate-200'
-                    }`}
-                  >
-                    <div
-                      className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-300 ${
-                        item.value ? 'right-1' : 'left-1'
-                      }`}
-                    />
-                  </button>
-                )}
-
-                {isNavigableItem(item) && item.action === 'link' && (
-                  <button
-                    onClick={() => window.location.href = item.href}
-                    className="w-8 h-8 flex items-center justify-center rounded-sm hover:bg-slate-50 transition-colors"
-                  >
-                    <ChevronRight className="w-4 h-4 text-slate-400" />
-                  </button>
-                )}
-
-                {isNavigableItem(item) && item.action === 'action' && (
-                  <button
-                    onClick={item.onClick}
-                    className="w-8 h-8 flex items-center justify-center rounded-sm hover:bg-slate-50 transition-colors"
-                  >
-                    <ChevronRight className="w-4 h-4 text-slate-400" />
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="mt-8 p-5 bg-amber-50 border border-amber-200 rounded-sm">
-        <div className="flex items-start gap-3">
-          <Shield className="w-5 h-5 text-amber-600 mt-0.5" />
+    <div className="h-dvh bg-medical-surface flex overflow-hidden">
+      <aside className="hidden lg:flex w-72 shrink-0 flex-col border-r border-medical-border bg-white">
+        <div className="h-20 px-6 flex items-center gap-3 border-b border-medical-border">
+          <div className="w-10 h-10 rounded-sm bg-medical-secondary text-white flex items-center justify-center">
+            <ShieldCheck className="w-5 h-5 text-medical-primary" />
+          </div>
           <div>
-            <h4 className="font-bold text-amber-800 text-sm">Security Notice</h4>
-            <p className="text-xs text-amber-700 mt-1">
-              Changes to security settings may require email verification. We'll notify you of any critical changes to your account.
-            </p>
+            <p className="text-sm font-bold text-medical-secondary">Nana Health</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Clinical Network</p>
           </div>
         </div>
+
+        <nav className="flex-1 px-4 py-6 space-y-1">
+          {navigation.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-3 rounded-sm text-sm font-bold transition-colors ${
+                  isActive
+                    ? 'bg-medical-primary text-white'
+                    : 'text-slate-500 hover:bg-medical-surface hover:text-medical-secondary'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="p-4 border-t border-medical-border space-y-4">
+          <div className="p-3 bg-medical-surface border border-medical-border rounded-sm">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Signed in as</p>
+            <p className="text-sm font-bold text-medical-secondary truncate mt-1">{user.name}</p>
+            <p className="text-xs text-slate-500 truncate">{user.email}</p>
+          </div>
+          <button
+            onClick={logout}
+            className="w-full btn-secondary flex items-center justify-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </button>
+        </div>
+      </aside>
+
+      <div className="flex-1 min-w-0 flex flex-col">
+        <header className="h-16 lg:h-20 shrink-0 bg-white border-b border-medical-border flex items-center justify-between px-4 sm:px-6 lg:px-10">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Secure Workspace</p>
+            <p className="text-sm font-bold text-medical-secondary">Welcome back, {user.name}</p>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-2 rounded-sm">
+            <Activity className="w-3.5 h-3.5" />
+            Online
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-y-auto scrollbar-hide px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+          {children}
+        </main>
+
+        <nav className="lg:hidden shrink-0 bg-white border-t border-medical-border grid grid-cols-5">
+          {navigation.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-label={item.label}
+                className={`h-16 flex flex-col items-center justify-center gap-1 text-[10px] font-bold transition-colors ${
+                  isActive ? 'text-medical-primary' : 'text-slate-400'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </div>
   );
