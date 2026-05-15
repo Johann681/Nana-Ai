@@ -18,7 +18,7 @@ export default function Header({ isOnline }: HeaderProps) {
           <div className="flex items-center gap-1.5">
             <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-slate-300'}`} />
             <p className="text-[10px] text-slate-500 font-medium">
-              {isOnline ? 'Always available' : 'Thinking...'}
+              {isOnline ? 'Always available' : 'Nana is thinking...'}
             </p>
           </div>
         </div>

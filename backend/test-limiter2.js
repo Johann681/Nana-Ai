@@ -18,7 +18,6 @@ app.use((err, req, res, next) => {
 
 app.listen(5002, async () => {
   try {
-    const fetch = (await import('node-fetch')).default;
     const res = await fetch('http://localhost:5002/test', { method: 'POST' });
     const text = await res.text();
     console.log('Response:', text);

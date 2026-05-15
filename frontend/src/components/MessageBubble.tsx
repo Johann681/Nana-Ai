@@ -16,7 +16,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
       <div className={`flex items-center gap-2 mb-2 px-1 ${isUser ? 'flex-row-reverse' : ''}`}>
         <div className={`w-2 h-2 ${isUser ? 'bg-slate-300' : 'bg-medical-primary'}`} />
         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-          {isUser ? 'Patient' : 'Clinical AI Node'}
+          {isUser ? 'Patient' : 'Nana'}
         </span>
         <span className="text-[10px] text-slate-300 font-mono">
           {timestamp}

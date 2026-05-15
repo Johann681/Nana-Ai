@@ -186,7 +186,7 @@ export default function ChatWindow() {
         {(isLoading || isTyping) && (
           <div className="flex items-center gap-2 px-2 pb-4 msg-animate">
             <span className="text-xs font-bold text-emerald-800 animate-pulse">
-              Dr. Ada is typing
+              Nana is thinking...
             </span>
             <div className="flex gap-1">
               <span className="w-1 h-1 bg-emerald-800 rounded-full typing-dot" />

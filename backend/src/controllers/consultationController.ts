@@ -30,7 +30,7 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
     const user = req.user;
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-    // 1. Process through AI Pipeline
+    // 1. Process through Nana pipeline
     const history = consultation.messages.map(m => ({
       role: m.role as 'user' | 'assistant',
       content: m.content
@@ -58,7 +58,7 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
       isEmergency: result.isEmergency
     });
   } catch (error: unknown) {
-    console.error('[AI Error]', error);
+    console.error('[Nana Error]', error);
     const message = error instanceof Error ? error.message : 'An unknown error occurred';
     res.status(500).json({ error: message });
   }

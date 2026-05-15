@@ -1,8 +1,7 @@
-import { EmergencyDetector } from './emergencyDetector';
-import { SpecialistRouter, SpecialistType } from './specialistRouter';
-import { PromptBuilder } from './promptBuilder';
-import { OllamaService } from './ollamaService';
+import { callNanaModel } from './nanaModelService';
 import { IUser } from '../models/User';
+
+export type SpecialistType = 'general';
 
 export interface PipelineResult {
   aiResponse: string;
@@ -13,7 +12,7 @@ export interface PipelineResult {
 
 export class AIPipeline {
   /**
-   * Orchestrates the entire AI flow for a clinical message
+   * Orchestrates the Nana model flow for a clinical message
    */
   static async processMessage(
     content: string, 
@@ -23,38 +22,12 @@ export class AIPipeline {
     
     console.log(`[AIPipeline] Processing message for user: ${user._id}`);
 
-    // 1. Emergency Detection
-    const isEmergency = await EmergencyDetector.isEmergency(content);
-    if (isEmergency) {
-      return {
-        aiResponse: "🚨 EMERGENCY DETECTED: Your symptoms require immediate medical attention. Please call emergency services (911 or your local equivalent) or go to the nearest emergency room immediately. MedCore AI cannot provide emergency care.",
-        isEmergency: true,
-        specialist: 'general',
-        suggestedStageIncrease: false
-      };
-    }
-
-    // 2. Specialist Routing
-    const specialist = await SpecialistRouter.route(content);
-
-    // 3. Prepare Context & Prompt
-    const patientContext = {
-      name: user.name,
-      allergies: user.healthInfo?.allergies || [],
-      medications: user.healthInfo?.medications || [],
-      chronicConditions: user.healthInfo?.chronicConditions || [],
-      recentSymptoms: user.healthInfo?.recentSymptoms || [],
-    };
-
-    const fullPrompt = PromptBuilder.build(content, specialist, patientContext, history);
-
-    // 4. Inference
-    const aiResponse = await OllamaService.generate(fullPrompt);
+    const aiResponse = await callNanaModel(content);
 
     return {
       aiResponse,
       isEmergency: false,
-      specialist,
+      specialist: 'general',
       suggestedStageIncrease: true
     };
   }

@@ -72,7 +72,7 @@ export default function ChatPage() {
       
       const assistantMessage: Message = {
         role: 'assistant',
-        content: response.chunks ? response.chunks.join(' ') : 'No response from AI.',
+        content: response.chunks ? response.chunks.join(' ') : 'No response from Nana.',
         timestamp: new Date().toISOString(),
         stage: response.stage,
         isEmergency: response.isEmergency,
@@ -119,11 +119,11 @@ export default function ChatPage() {
           <header className="px-6 py-4 border-b border-medical-border flex items-center justify-between bg-slate-50/50">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-medical-secondary text-white rounded-none flex items-center justify-center text-xl font-bold border border-medical-primary/20">
-                AI
+                N
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-bold text-medical-secondary uppercase tracking-wider">MedCore AI Assistant</h2>
+                  <h2 className="text-sm font-bold text-medical-secondary uppercase tracking-wider">Nana Health Assistant</h2>
                   <span className={`w-1.5 h-1.5 ${isEmergency ? 'bg-red-500' : 'bg-emerald-500'} rounded-full animate-pulse`} />
                 </div>
                 <p className="text-[10px] font-bold text-medical-primary uppercase tracking-[0.2em]">
@@ -163,12 +163,12 @@ export default function ChatPage() {
                 {isLoading && (
                   <div className="flex gap-4 animate-fade-in">
                     <div className="w-10 h-10 bg-medical-secondary rounded-none flex items-center justify-center text-white shrink-0">
-                      AI
+                      N
                     </div>
                     <div className="space-y-2 max-w-[80%]">
                       <div className="bg-slate-50 border border-medical-border p-4 rounded-none flex items-center gap-3">
                         <Loader2 className="w-4 h-4 text-medical-primary animate-spin" />
-                        <span className="text-[11px] font-bold text-medical-primary uppercase tracking-[0.2em]">Consulting Local LLM Node...</span>
+                        <span className="text-[11px] font-bold text-medical-primary uppercase tracking-[0.2em]">Nana is thinking...</span>
                       </div>
                     </div>
                   </div>
